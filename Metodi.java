@@ -145,13 +145,13 @@ public class Metodi{
         return accorcio_lunghezza(vet, cont);
     }
     public static Settore get_riga(int index,Cella nonogram[][]){
-        return new Settore(index,"Riga",nonogram,nonogram[index].length,nonogram.length);
+        return new Settore(index,Enum.tipo_settore.riga,nonogram,nonogram[index].length,nonogram.length);
     }
     public static Settore get_riga(int index,int numeri[],Cella nonogram[][]){
-        return new Settore(index,"Riga",nonogram,numeri,nonogram[0].length,nonogram.length);
+        return new Settore(index,Enum.tipo_settore.riga,nonogram,numeri,nonogram[0].length,nonogram.length);
     }
     public static Settore get_colonna(int index,int numeri[],Cella nonogram[][]){
-        return new Settore(index,"Colonna",nonogram,numeri,nonogram[0].length,nonogram.length);
+        return new Settore(index,Enum.tipo_settore.colonna,nonogram,numeri,nonogram[0].length,nonogram.length);
     }
     public static int[][] creo_ipotesi(int vet1[],int temp[][]){
      /*vet1 contiene come va il settore ad inizio per ogni possibile ipotesi

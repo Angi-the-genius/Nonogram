@@ -1,22 +1,40 @@
-import java.rmi.registry.RegistryHandler;
+//import java.rmi.registry.RegistryHandler;
 import java.util.Scanner;
-import javax.lang.model.util.ElementScanner14;
+//import javax.lang.model.util.ElementScanner14;
+/**
+ * An object of Nonogram class represent a Nonogram.
+ * Any Nonogram have:
+ * 1)a matrix of cells.(it represents all cells of the nonogram)
+ */
 public class Nonogram{
     public static void main(String[] args)
     {
-        Nonogram nonogram=Metodi.creo_nonogram(3);
-        nonogram.stampo(0);
+        Nonogram nonogram=Metodi.creo_nonogram(2);
         nonogram.stampo();
         nonogram.risolvo();
         nonogram.stampo();
     }
     private Cella celle[][];
+    /**
+     * This vector represents the rows of the nonogram
+     */
+    private Settore vet_righe[];
+    /**
+     * This vector represents the columns of the nonogram
+     */
+    private Settore vet_colonne[];
+    private int base;
+    private int altezza;
     public void set_cella(int i,int j,String carattere){
         celle[i][j].set_carattere(carattere);
     }
     public void set_celle(Cella nonogram[][]){
         this.celle=nonogram;
     }
+    /**
+     * The methods sets the celle variable equals to the empty cell.
+     * base and altezza variables must be initialized before the invocation of the method.
+     */
     public void set_celle(){
         celle=new Cella[altezza][base];
         for(int i=0;i<altezza;i++)
@@ -26,14 +44,28 @@ public class Nonogram{
     public Cella[][] get_celle(){
         return celle;
     }
+    /**
+     * The method returns the celle[i][j] of the invoking object.
+     * @param i row of the returned cell
+     * @param j column of the invoking object
+     * @return this.celle[i][j]
+     */
     public Cella get_cella(int i,int j){
         return celle[i][j];
     }
-    private Settore vet_righe[];
-    private Settore vet_colonne[];
+    /**
+     * The method returns the index-th row of the invoking object
+     * @param index index of the returned row
+     * @return this.vet_righe[index]
+     */
     public Settore get_riga(int index){
         return vet_righe[index];
     }
+    /**
+     * The method returns the index-th column of the invoking object
+     * @param index index of the returned column
+     * @return this.vet_colonne[index]
+     */
     public Settore get_colonna(int index){
         return vet_colonne[index];
     }
@@ -41,9 +73,9 @@ public class Nonogram{
         vet_righe=new Settore[altezza];
         vet_colonne=new Settore[base];
         for(int i=0;i<altezza;i++)
-            vet_righe[i]=new Settore(i,"Riga",celle,base,altezza);
+            vet_righe[i]=new Settore(i,Enum.tipo_settore.riga,celle,base,altezza);
         for(int i=0;i<base;i++)
-            vet_colonne[i]=new Settore(i,"Colonna",celle,base,altezza);
+            vet_colonne[i]=new Settore(i,Enum.tipo_settore.colonna,celle,base,altezza);
     }
     public void set_riga(int i,Settore riga){
         vet_righe[i]=riga;
@@ -51,8 +83,7 @@ public class Nonogram{
     public void set_colonna(int i,Settore colonna){
         vet_colonne[i]=colonna;
     }
-    private int base;
-    private int altezza;
+
     public void set_base(int base){
         this.base=base;
     }
@@ -183,31 +214,19 @@ public class Nonogram{
     }
     //TECNICHE RISOLUTIVE
     public boolean risolvo(){
-        Scanner tastiera=new Scanner(System.in);
         for(int i=0;i<altezza;i++)
-            if(vet_righe[i].tecnica(this.celle,get_numeri_righe(),get_numeri_colonne())){
-                System.out.println("Applico tecnica alla riga "+i);
-                stampo();
-                //int interrompo_flusso=tastiera.nextInt();
+            if(vet_righe[i].tecnica(this)){
                 if(finito())
                     return true;
-                risolvo();
+                return risolvo();
             }
         for(int i=0;i<base;i++)
-            if(vet_colonne[i].tecnica(this.celle,get_numeri_righe(),get_numeri_colonne())){
-                System.out.println("Applico tecnica alla colonna "+i);
-                stampo();
-                //int interrompo_flusso=tastiera.nextInt();
+            if(vet_colonne[i].tecnica(this)){
                 if(finito())
                     return true;
-                risolvo();
+                return risolvo();
             }
-        if(finito())
-            return true;
-        else{
-            System.out.println("Con le tecniche a disposizione non sono in grado di risolvere il nonogram");
-            return false;
-        }
+        return false;
     }
     public Nonogram[] tentativi(){
         risolvo();
