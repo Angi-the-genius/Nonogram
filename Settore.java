@@ -1,9 +1,5 @@
 import java.util.Scanner;
-import javax.imageio.spi.ImageReaderWriterSpi;
-import javax.lang.model.util.ElementScanner14;
 
-
-import java.util.InputMismatchException;
 /**
  * An object of the Settore class represents a single row or a single column of the Nonogram.
  * The dinamical variable type tell us if the object represents a row or if it represents a column.
@@ -23,47 +19,30 @@ public class Settore{
         nonogram.stampo();
 
     }
-    /**
-     * The base attribute represents the length of the nonogram's base.
-     * This is also equals to the number of nonogram's columns.
-     */
-    private int base;
-    /**
-     * The altezza attribute represents the length of the nonogram's altezza.
-     * This is also equals to the number of nonogram's rows.
-     */
-    private int altezza;    
+    final private int length;  
     /**
      * This integer vector contains numbers indicating the blocks of the invoking object.
      */
-    private int numeri[];
+    final private int numeri[];
     /**
      * type tells us if the invoking object represents a row or if it represents a column.
      */
-    private Enum.tipo_settore type=null;
+    final private Enum.tipo_settore type;
     /**
      * The index attribute represent the index of the sector.
      * This number is in {1,2,...,altezza} if the sector is a row.
      * This number is in {1,2,...,base} if the sector is a column
      */    
-    private int index;
+    final private int index;
     /**
      * The vector celle represents the cells that are contained in the sector.
      * If type=row then celle[0] is the cell at the left.
      * If type=column then cell[0] is the cell at the top
      */
-    private Cella celle[];
-    public void set_base(int base){
-        this.base=base;
-    }
-    public void set_altezza(int altezza){
-        this.altezza=altezza;
-    }
-    public int get_base(){
-        return base;
-    }
-    public int get_altezza(){
-        return altezza;
+    final private Cella celle[];
+    
+    public int getLength() {
+        return length;
     }
 
     public int[] get_numeri(){
@@ -88,388 +67,195 @@ public class Settore{
         }
     }
 
-    public void set_numeri(int numeri[]){//se trova 0 in numeri non inserisce più nullat
-        this.numeri=numeri;     
-    }
-
     public Enum.tipo_settore get_type(){
         return type;
     }
-    public void set_type(Enum.tipo_settore type){
-        this.type=type;
-    }
 
-    public void set_index(int index){
-        this.index=index;
-    }
     public int get_index(){
         return index;
     }
-    
-    /**
-     * The methods returns the nonogram's cells that are still white
-     * @return only the empty cells
-     */
-    public Cella[] get_celle_vuote(){
-        Cella result[]=new Cella[celle.length];
-        int cont=0;
-        switch(type){
-            case riga:
-                for(int i=0;i<celle.length;i++)
-                    if(celle[i].get_ce_nella_riga())
-                        result[cont++]=celle[i];
-                break;
-            case colonna:
-                for(int i=0;i<celle.length;i++)
-                    if(celle[i].get_ce_nella_riga())
-                        result[cont++]=celle[i];
-                break;
-        }
-        return Metodi.accorcio_lunghezza(result, cont);
-    }
-    public Cella[] get_celle(int inutile){
+
+    public Cella[] get_celle(){
         return celle;
     }
-    public Cella get_cella_vuota(int index){//non ritorna celle[index] ma get_celle_vuote()[index]
-        return get_celle_vuote()[index];
-    }
-    public Cella get_cella(int index,int inutile){
-        return get_celle(inutile)[index];
-    }
-    public void set_celle(Cella celle[]){
-        this.celle=celle;
-    }
-    public void set_cella(String carattere,int index){
-        get_cella_vuota(index).set_carattere(carattere);
-    }
-    public void set_cella(int posiz,int index){
-        get_cella_vuota(index).set_posiz(posiz);
-    }
-    public void set_cella(Cella cella,int index){
-        //get_cella_vuota(index)=cella;questo non si puo fare quimdi bisogna ripetere get-celle()
-        int cont=0;
-        Cella vettore_di_celle[]=new Cella[celle.length];
-        for(int i=0;i<celle.length;i++)
-            if(type==Enum.tipo_settore.riga){
-                if(celle[i].get_ce_nella_riga())
-                    vettore_di_celle[cont++]=celle[i];
-            }
-            else if(type==Enum.tipo_settore.colonna){
-                if(celle[i].get_ce_nella_colonna())
-                    vettore_di_celle[cont++]=celle[i];
-            }
-            else
-                System.out.println("Errore, type sbagaliato in set_cella()");
-        for(int i=0;i<celle.length;i++)
-            if(celle[i]==vettore_di_celle[index]){
-                celle[i]=cella;
-                i=celle.length;
-            }
-    }
-    public void set_cella(String carattere,int posiz,int index){
-        set_cella(carattere,index);
-        set_cella(posiz,index);
-    }
-    public Settore(int index,Enum.tipo_settore type,Cella nonogram[][],int base,int altezza){
-        Cella celle[]=new Cella[0];
-        if(type==Enum.tipo_settore.riga)
-            celle=Metodi.get_celle_riga(index,nonogram);
-        else if(type==Enum.tipo_settore.colonna)
-            celle=Metodi.get_celle_colonna(index,nonogram);
-        costruttore_settore(index,type,celle,base,altezza);
-    }
-    public Settore(int index,Enum.tipo_settore type,Cella celle[],int base,int altezza){//pone numeri[]=new int[100]
-        costruttore_settore(index,type,celle,base,altezza);
-    }
-    public Settore(int index,Enum.tipo_settore type,Cella celle[],int numeri[],int base,int altezza){
-        this(index,type,celle,base,altezza);
-        set_numeri(numeri);
-    }
-    public Settore(int index,Enum.tipo_settore type,Cella nonogram[][],int numeri[],int base,int altezza){
-        this(index,type,nonogram,base,altezza);
-        set_numeri(numeri);
-    }
-    public void costruttore_settore(int index,Enum.tipo_settore type,Cella celle[],int base,int altezza){
-        set_index(index);
-        set_type(type);
-        set_base(base);
-        set_altezza(altezza);
-        if(type==Enum.tipo_settore.riga || type==Enum.tipo_settore.colonna)
-            set_celle(celle);
-        else{
-            System.out.println("Errore nel costruttore Settore");
-            return;
+
+    public Cella get_cella(int i){
+        try{
+            return celle[i];
+        }catch(NullPointerException e){
+            throw new NullPointerException("La variabile celle e' null.");
+        }catch(ArrayIndexOutOfBoundsException e){
+            throw new ArrayIndexOutOfBoundsException("L'indice i non è compatibile con la lunghezza di celle.\ni: "+i+"\ncelle.length: "+celle.length);
         }
-        //System.out.println(type+" "+index+".\ncelle.length: "+this.celle.length+".\nget_celle_vuote().length: "+get_celle_vuote().length);
-        set_numeri(new int[100]);//poi verrà accorciato
+    }
+
+    public Settore(Enum.tipo_settore type,int index,int numeri[],Cella celle[]){
+        this.type=type;
+        this.index=index;
+        this.numeri=numeri;
+        this.celle=celle;
+        this.length=celle.length;
+    }
+
+    public Settore(Enum.tipo_settore type,int index,int numeri[],Cella celle[][]){
+        this(type,index,numeri,Metodi.get_settore(type,index,celle));
     }
     
-    //METODI DI CLASSE
-    public void tolgo_numero(int index){
-        if(index>=numeri.length){
-            System.out.println("Errore non posso togliere il numero nella posizione "+index+" nel metodo tolgo_numero()");
-            return;
-        }
-        numeri=Metodi.rimuovo_elemento_nella_posizione(numeri, index); 
-    }
-    public void tolgo_celle(int numero){//toglie le prime numero celle
-        for(int i=0;i<numero;i++)
-            if(type==Enum.tipo_settore.riga)
-                get_cella_vuota(0).tolgo_dalla_riga();
-            else
-                get_cella_vuota(0).tolgo_dalla_colonna();
-    }
-    public void leggo(){
-        Scanner tastiera=new Scanner(System.in);
-        System.out.println("Inserisci "+type+" numero "+index);
-        for(int i=0;i<100;i++){
-            numeri[i]=tastiera.nextInt();
-            if(numeri[i]==0){
-                numeri=Metodi.accorcio_lunghezza(numeri, i);
-                i=99;
-            }
-        }
-    }
     public void stampo(){
-        System.out.print("Settore: "+type+" "+index+":");
-        System.out.print("get_celle_vuote(): ");
-        Metodi.stampo_posiz(get_celle_vuote());
-        /*System.out.print("get_celle(0): ");
-        Metodi.stampo_posiz(get_celle(0));
+        System.out.print("Settore: "+type+" "+index+": |");
+        for(int i=0;i<length;i++)
+            System.out.print(celle[i].get_carattere().toString());
+        System.out.println("|");
         System.out.print("numeri: ");
-        Metodi.stampo(numeri);
-        System.out.println("Carattere; ");
-        Metodi.stampo_carattere(get_celle(0));*/     
+        Metodi.stampo(numeri);   
     }
+    public Settore copia(){//restituisce un settore con attributi dello stesso valore degli attributi del settore invocante
+        return new Settore(type,index,Metodi.copia(numeri),Metodi.copia(celle));
+    }
+
     /**
      * Ritorna quante celle occupano tutti i blocchetti del settore nel caso in cui sono compattati il più possibile
      * @return numeri[0]+...+numeri[numeri.length-1]+numeri.length-1
      */
-    public int somma_numeri(){//ritorna i numeri sommati dopo aver inserito il minimo numero di spazi
+    private int somma_numeri(){//ritorna i numeri sommati dopo aver inserito il minimo numero di spazi
         int somma=numeri.length-1;//numero di spazi
         for(int i=0;i<numeri.length;i++)
             somma=somma+numeri[i];
         return somma;
     }
-    /*
-    PENSO SIA DA CANCELLARE
-    public int numero_massimo(){
-        return Metodi.get_massimo(numeri);
-    }*/
+
+    
+
+   
     /**
-     * Il metodo ritorna un vettore contenente l'inidice della prima cella di ogni blocchetto presente nel settore
+     * Il metodo ritorna il numero di celle in cui può essere messa la prima cella del primo blocco.
+     * Questo calcolo viene fatto assumendo che il settore sia completamente bianco.
+     * E' compito del metodo posso_inserire capire se effettivamente il primo blocco può iniziare in una determinata cella
      * @return
      */
-    public int[] get_blocchi(){
-        int blocchi[]=new int[get_celle_vuote().length],cont=0;
-        for(int i=0;i<get_celle_vuote().length;i++)
-            if(get_cella_vuota(i).get_carattere().equals(" "+(char)3+" ")){
-                blocchi[cont++]=i;
-                while(i<get_celle_vuote().length-1 && get_cella_vuota(++i).get_carattere().equals(" "+(char)3+" "));
-            }
-        return Metodi.accorcio_lunghezza(blocchi, cont);
+    private int get_spazio(){
+        return length-somma_numeri()+1;
     }
 
-    public int[] get_blocchi_x(){
-        int blocchi_x[]=new int[get_celle_vuote().length],cont=0;
-        for(int i=0;i<get_celle_vuote().length;i++){
-            if(get_cella_vuota(i).get_carattere()==" X ")
-                blocchi_x[cont++]=i;
-            while(i<get_celle_vuote().length-1 && get_cella_vuota(++i).get_carattere()==" X ");
-        }
-        return Metodi.accorcio_lunghezza(blocchi_x,cont);
-    }
-    public int[] get_blocchi_x_length(){
-        int blocchi_x[]=get_blocchi_x();
-        int blocchi_x_length[]=new int[blocchi_x.length];
-        for(int i=0;i<blocchi_x.length;i++){
-            blocchi_x_length[i]=1;
-            for(int j=blocchi_x[i]+1;get_cella_vuota(j).get_carattere()==" X ";j++)
-                blocchi_x_length[i]++;
-        }
-        return blocchi_x_length;
-    }
-    public int get_spazio(){
-        if(type==Enum.tipo_settore.riga || type==Enum.tipo_settore.colonna)
-            return get_celle_vuote().length-somma_numeri();
-        else{
-            System.out.println("Errore in get_spazio.Type: "+type);
-            return -1;
-        }
-    }
-    public void copia_settore(Settore settore){//l'oggetto invocante avra gli attributi dello stesso valore di quelli di settore ma diversi
-        set_base(settore.get_base());
-        set_altezza(settore.get_altezza());
-        set_type(settore.get_type());
-        set_celle(settore.get_celle(0));
-        set_index(settore.get_index());
-        set_numeri(settore.get_numeri());
-    }
-    public Settore copia_settore(){//restituisce un settore con attributi dello stesso valore degli attributi del settore invocante
-        Cella vet[]=new Cella[0];
-        if(type==Enum.tipo_settore.riga)
-            vet=new Cella[base];
-        else if(type==Enum.tipo_settore.colonna)
-            vet=new Cella[altezza];
-        else{
-            System.out.println("Errore nel metodo copia_settore");
-            return null;
-        }
-        for(int i=0;i<vet.length;i++){
-            vet[i]=new Cella(celle[i].get_carattere(),celle[i].get_posiz(),base,altezza);
-            if(celle[i].get_ce_nella_riga()==false)
-                vet[i].tolgo_dalla_riga();
-            if(celle[i].get_ce_nella_colonna()==false)
-                vet[i].tolgo_dalla_colonna();
-        }
-        return new Settore(index,type,vet,numeri,base,altezza);
-    }
-    public void catch_errore(String metodo){//ritorna true se type è sbagliato
-        if(type!=Enum.tipo_settore.riga && type!=Enum.tipo_settore.colonna){
-            System.out.println("errore nel metodo Settore."+metodo+". Type: "+type);
-            System.exit(0);
-        }
-    }
-    public boolean posso_inserire(int i,int blocco_length){//ritorna true se si puo inserire un blocco lungo blocco_length a partire dalla cella get_cella_vuota(i) come primo blocco del settore(prima della cella get_cella_vuota(i) ci devono essere tutte x)
+    
+    /**
+
+     * @param i
+     * @return
+     */
+    /**
+     * Il metodo ritorna true se si può inserire il primo blocco alla cella i.
+     * Il metodo non controlla che ci sia abbastanza spazio per inserire i blocchi dopo.
+     * Quindi prima di invocare questo metodo 
+     * è bene controllare che 0<=i<get_spazio().
+     * Il metodo non fa questo controllo per velocizzare tutto
+     * @param i jhvjhv
+     * @return
+     */
+    private boolean posso_inserire(int i){
         for(int j=0;j<i;j++)
-            if(get_cella_vuota(j).get_carattere().equals(" "+(char)3+" ")){          
-                //System.out.println("Non posso inserire blocco lungo "+blocco_length+" a partire dalla cella "+get_cella_vuota(i).get_posiz()+" perche alla cella "+get_cella_vuota(j).get_posiz()+" ce un cuore ma ci vorebbe una x");
-                return false;
-            }
-        if(i+blocco_length<get_celle_vuote().length)
-            if(get_cella_vuota(i+blocco_length).get_carattere().equals(" "+(char)3+" ")){
-                //System.out.println("Non posso inserire blocco lungo "+blocco_length+" a partire dalla cella "+get_cella_vuota(i).get_posiz()+" perche alla cella "+get_cella(i+blocco_length).get_posiz()+" ce un cuore ma ci vorebbe una x");
-                return false;
-            }
-        return posso_inserire(i,blocco_length,0);
-    }
-    public boolean posso_inserire(int i,int blocco_length,int inutile){//ritorna true se puo essere inserito un blocco lungo almreno blocco_length a partire dalla posizione i(il blocco non deve essere numeri[0])
-        if(i+blocco_length>get_celle_vuote().length){
-            //System.out.println("Non posso inserire blocco lungo "+blocco_length+" a parstire dalla cella "+i+" perchè non ci sta");
-            return false;
-        }
-        for(int j=i;j<i+blocco_length;j++)
-            if(get_cella_vuota(j).get_carattere()==" X "){
-                //System.out.println("Non posso inserire blocco lungo "+blocco_length+" a partire dalla cella "+get_cella_vuota(i).get_posiz()+" perche alla cella "+get_cella_vuota(j).get_posiz()+" ce una x ma ci vorebbe un cuore");
-                return false;
-            }
+            if(celle[j].get_carattere()==Enum.tipo_carattere.blocco)
+                return false;//Non si può inserire il blocco perchè prima del blocco ci devono essere solo bianchi o x ma c'è un blocchetto alla j-esima cella del settore
+        for(int j=i;j<i+numeri[0];j++)
+            if(celle[j].get_carattere()==Enum.tipo_carattere.x)
+                return false;//Non si può inserire il blocco perchè dove ci vorrebbe un blocco nero c'è una x
+        if(length>i+numeri[0] && celle[i+numeri[0]].get_carattere()==Enum.tipo_carattere.blocco)
+            return false;//Non si può inserire il blocco perchè dove ci andrebbe la x di delimitazione(quella a dx per le righe e sotto per le colonne) ci vorrebbe una x ma c'è un blocco
         return true;
     }
-    public int[] costruisco_temp(int i){
-        /*se si puo inserire un blocco lungo blocco_length con prima cella i restituisce un vettore di  0 e 1 che
-        rappresenta la configurazione del pezzo del settore a sinistra del blocco inserito(blocco inserito 
-        e cella successiva sono incluse in temp)*/
-        if(posso_inserire(i,numeri[0])==false)
-            return new int[0];
+    /**
+     * Il metodo ritorna la configurazione(sotto forma di 0 e 1) di quella parte del settore coinvolta 
+     * nell'inserimento del primo blocchetto. Eventualmente il vettore ritornato termina per 0 se il primo blocchetto
+     * non ha ultima cella corrispondente all'ultima cella del settore.
+     * Il primo blocchetto viene inserito con prima cella nella i-esima cella del settore
+     * Non viene controllato se effettivamente si può fare una tale cosa.
+     * @param i indice della cella dalla quale partira il primo blocco
+     * @return configurazione 0 0 1 1 1 1 0 ( caso i=2 , numeri[0]=4 , length>i+numeri[0] )
+     */
+    private int[] costruisco_prima_parte(int i){
         int temp[]=new int[i+numeri[0]];
-        if(i+numeri[0]<get_celle_vuote().length)
+        if(i+numeri[0]<length)
             temp=new int[i+numeri[0]+1];
         for(int j=0;j<i;j++)//sicuramente get_cella_vuota(j).get_carattere()!=" "+(char)3+" "
             temp[j]=0;
         for(int j=i;j<i+numeri[0];j++)//sicuramente get_cella_vuota(j).get_carattere()!=" X "
             temp[j]=1;
-        if(i+numeri[0]<get_celle_vuote().length)
+        if(i+numeri[0]<length)
             temp[i+numeri[0]]=0;
         return temp;
     }
     //TECNICHE RISOLUTIVE
-    public int[] spazio_0(){//se è assurdo ritorna new int[0]
-        int vet[]=new int[get_celle_vuote().length],cont=0;
-        for(int i=0;i<numeri.length;i++){
-            for(int j=0;j<numeri[i];j++)
-                if(get_cella_vuota(cont).get_carattere()==" X ")
-                    return new int[0];
-                else
-                    vet[cont++]=1;
-            if(cont<get_celle_vuote().length)
-                if(get_cella_vuota(cont).get_carattere().equals(" "+(char)3+" "))
-                    return new int[0];
-                else
-                    vet[cont++]=0;
-        }
-        return vet;
-    }
+    
     /**
      * Questo metodo viene invocato quando sono finiti i numeri del settore e quindi tutte le celle dovrebbero essere vuote.
      * Il metodo ritorna tale configuarazione se è tutto corretto se no ritorna new int[0][0]
      * @return la configurazione del settore se è tutto corretto
      */
     public int[][] niente_numeri(){
-        int vet[][]=new int[1][get_celle_vuote().length];
-        int lunghezza=get_celle_vuote().length;
-        for(int i=0;i<lunghezza;i++)
-            if(get_cella_vuota(i).get_carattere().equals(" "+(char)3+" "))
+        int vet[][]=new int[1][length];
+        for(int i=0;i<length;i++)
+            if(celle[i].get_carattere()==Enum.tipo_carattere.blocco)
                 return new int[0][0];//non ci sono casi possibili con le configurazioni precedenti
             else
                 vet[0][i]=0;
         return vet;
     }
-    public int[][] spazio_0(int inutile){
-        int vet[][]=new int[1][get_celle_vuote().length];
-        vet[0]=spazio_0();
-        if(vet[0].length==0)
-            return new int[0][0];
-        return vet;
+    
+    /**
+     * Il metodo ritorna il settore che si ottiene dopo aver tolto le prime i+numeri[0]+1 celle dal settore.
+     * Se length==i+numeri[0] vengono ritornato un settore con 0 celle
+     * Il settore ritornato non avrà in numeri il primo numero dell'oggetto invocante.
+     * Il metodo, essendo privato, non fa un sacco di controlli.
+     * Questo metodo va invocato quando effettivamente è possibile inserire il primo blocco a partire dalla cella i.
+     * @param i indice della cella dove viene posizionato il primo blocco
+     * @return settore che si ottiene dall'oggetto invocante dopo aver tolto le celle coinvolte nell'inserimento del primo blocco.
+     */
+    private Settore creo_settorino(int i){
+        if(length>i+numeri[0]){
+            return new Settore(type,index,Metodi.rimuovo_primo_elemento(numeri),Metodi.rimuovo_celle(celle,i+numeri[0]+1));
+        }else if(length==i+numeri[0]){
+            return new Settore(type,index,new int[0],new Cella[0]);
+        }else
+            throw new RuntimeException("Non è possibile inserire il primo blocco alla cella i(="+i+") perche' il settore è troppo corto.\nIl primo blocco sforerebbe(senza contare gli altri)");
     }
-    public int[][] niente_blocchi(){
-        //System.out.println("Non ci sono blocchi nel settore: entro in niente_blocchi()");
-        int blocchi_x[]=get_blocchi_x();
-        int blocchi_x_length[]=get_blocchi_x_length();
-        int spazio=get_spazio();
-        int vet[][]=new int[0][0];
-        if(blocchi_x.length>0){
-            vet=new int[0][0];
-            for(int i=0;i<=spazio && i<=blocchi_x[0]-numeri[0];i++){//scorro in tutte le possibili configurazioni dove posso mettere blocco lungo numeri[0] prima della prima x
-                System.out.println("inserisco blocco lungo "+numeri[0]+" a partire dalla cella "+i+" prima della x nella cella "+blocchi_x[0]);
-                vet=Metodi.aggiungo_vet_al_vettore(vet,creo_configurazioni(i));//se non puo inserire il blocco tecnica ritorna new int[0][0] e vet non cambia
-                System.out.println("vet:( restituito da tecnica("+i+","+numeri[0]+")");
-                Metodi.stampo(vet);
-            }
-            for(int i=blocchi_x[0]+blocchi_x_length[0];i<=spazio;i++){
-                System.out.println("inserisco blocco lungo "+numeri[0]+" a partire dalla cella "+i+" dopo della x nella cella "+blocchi_x[0]);
-                vet=Metodi.aggiungo_vet_al_vettore(vet,creo_configurazioni(i));
-                System.out.println("vet:( restituito da tecnica("+i+","+numeri[0]+")");
-                Metodi.stampo(vet);
-            }
-        }else{//se entra qui il settore non contiene ne cuori ne x
-            System.out.println("Non ci sono ne x ne cuori nel settore applico inserisco: ");
-            for(int i=0;i<=spazio;i++){
-                System.out.println("Inserisco blocco lungo "+numeri[0]+" a partire dalla cella "+i);
-                vet=Metodi.aggiungo_vet_al_vettore(vet,creo_configurazioni(i));
-                System.out.println("vet: ");
-                Metodi.stampo(vet);
-            }
-        }
-        return vet;
-    }
-    public int[][] creo_configurazioni(int i){//restituisce tutte le possibili configurazioni in cui è stato inserito un blocco lungo blocco_length la cui prima cella è in posizione i
-        int temp1[]=costruisco_temp(i);//contiene la configurazione della parte del settore in cui è stato inserito il blocco
+    /**
+     * 
+     * @param i deve essere <get_spazio()
+     * @return
+     */
+    private int[][] creo_configurazioni(int i){//restituisce tutte le possibili configurazioni in cui è stato inserito un blocco lungo blocco_length la cui prima cella è in posizione i
+        if(type==Enum.tipo_settore.colonna && index==6 && length==15)
+            System.out.println("Entro in creo_configurazioni.i: "+i);
 
-        int vet[][]=new int[0][0];
-        Settore settore=copia_settore();
-        settore.tolgo_celle(i+numeri[0]);
-        if(i+numeri[0]<get_celle_vuote().length)
-            settore.tolgo_celle(1);
-        settore.tolgo_numero(0);
-        if(settore.get_celle_vuote().length>0){
+        int temp1[]=costruisco_prima_parte(i);//contiene la configurazione della parte del settore in cui è stato inserito il blocco
+
+        int risultato[][]=new int[0][0];
+        Settore settore=creo_settorino(i);
+        if(settore.length>0){
             int temp[][]=settore.creo_configurazioni();
             if(temp.length>0){
                 int vet1[][]=Metodi.creo_ipotesi(temp1,temp);
-                vet=Metodi.aggiungo_vet_al_vettore(vet,vet1);
+                risultato=Metodi.aggiungo_vet_al_vettore(risultato,vet1);
             }
         }else
-            vet=Metodi.aggiungo_vet_al_vettore(vet,temp1);
-        return vet;
+            risultato=Metodi.aggiungo_vet_al_vettore(risultato,temp1);
+        return risultato;
     }
     public int[][] creo_configurazioni(){//se non ci sono casi possibili ritorna new int[0][0];
 
         if(numeri.length==0)
             return niente_numeri(); 
-        int vet[][]=new int[0][get_celle_vuote().length];//contiene 1 o 0 in ogni riga c'è una possibile configurazione
+        int vet[][]=new int[0][length];//contiene 1 o 0 in ogni riga c'è una possibile configurazione
 
-        for(int i=0;i<=get_spazio();i++){
-            int temp[][]=creo_configurazioni(i);
-            vet=Metodi.aggiungo_vet_al_vettore(vet,temp);
+        for(int i=0;i<get_spazio();i++){
+            if(posso_inserire(i)){
+                int temp[][]=creo_configurazioni(i);
+                if(type==Enum.tipo_settore.colonna && index==6 && length==15){
+                    System.out.println("Aggiungo seguente matrice");
+                    Metodi.stampo(temp);
+                }
+                vet=Metodi.aggiungo_vet_al_vettore(vet,temp);
+            }
         }
         return vet;
     }
@@ -485,55 +271,53 @@ public class Settore{
         Scanner tastiera=new Scanner(System.in);
         int vet[][]=creo_configurazioni();
         if(vet.length==0){
-            System.out.println("Il nonogram è impossibile perche' la "+type+" "+index+"  non ha configurazioni posibili");
-            System.exit(0);
+            throw new RuntimeException("La "+type+" di indice "+index+" non ha configurazioni possibili");
         }
         System.out.println("possibili configurazioni della "+type+" "+index+":");
         Metodi.stampo(vet);
-        Cella vettore_di_celle[]=new Cella[get_celle_vuote().length];
-        int somma[]=new int[vettore_di_celle.length],cont=0;
+        Cella vettore_di_celle[]=new Cella[length];
+        int somma[]=new int[length],cont=0;
         for(int i=0;i<somma.length;i++){
             somma[i]=0;
             for(int j=0;j<vet.length;j++)
                 somma[i]+=vet[j][i];
-            if(somma[i]==0 && get_cella_vuota(i).get_carattere()!=" X "){//nell'i-esima cella va inserito una x 
-                get_cella_vuota(i).set_x();
-                vettore_di_celle[cont++]=get_cella_vuota(i);
+            if(somma[i]==0 && celle[i].get_carattere()!=Enum.tipo_carattere.x){//nell'i-esima cella va inserito una x 
+                celle[i].set_x();
+                vettore_di_celle[cont++]=celle[i];
             }
-            if(somma[i]==vet.length && get_cella_vuota(i).get_carattere()!=" "+(char)3+" "){
-                get_cella_vuota(i).set_blocco();
-                vettore_di_celle[cont++]=get_cella_vuota(i);
+            if(somma[i]==vet.length && celle[i].get_carattere()!=Enum.tipo_carattere.blocco){
+                celle[i].set_blocco();
+                vettore_di_celle[cont++]=celle[i];
             }
         }
-        vettore_di_celle=Metodi.accorcio_lunghezza(vettore_di_celle,cont);
         if(cont>0){
+            vettore_di_celle=Metodi.accorcio_lunghezza(vettore_di_celle,cont);
             System.out.print("Inserito cuore o x nella "+type+" "+index+" nelle celle: ");
-            Metodi.stampo_posiz(vettore_di_celle);
-        }
-        switch(type){
-            case riga:
-                for(int i=0;i<cont;i++){
-                    System.out.println("");
-                    nonogram.stampo();
-                    if(nonogram.finito())
-                        return true;
-                    tastiera.nextInt();
-                    nonogram.get_colonna(vettore_di_celle[i].get_colonna()).tecnica(nonogram);
-                }
-                break;
-            case colonna:
-                for(int i=0;i<cont;i++){
-                    System.out.println("");
-                    nonogram.stampo();
-                    if(nonogram.finito())
-                        return true;
-                    tastiera.nextInt();
-                    nonogram.get_riga(vettore_di_celle[i].get_riga()).tecnica(nonogram);
-                }
-                break;
-        }
-        if(cont>0)
+            Metodi.stampo_posiz(vettore_di_celle,nonogram.get_base());
+            switch(type){
+                case riga:
+                    for(int i=0;i<cont;i++){
+                        System.out.println("");
+                        nonogram.stampo();
+                        if(nonogram.finito())
+                            return true;
+                        tastiera.nextInt();
+                        nonogram.get_colonna(vettore_di_celle[i].get_colonna()).tecnica(nonogram);
+                    }
+                    break;
+                case colonna:
+                    for(int i=0;i<cont;i++){
+                        System.out.println("");
+                        nonogram.stampo();
+                        if(nonogram.finito())
+                            return true;
+                        tastiera.nextInt();
+                        nonogram.get_riga(vettore_di_celle[i].get_riga()).tecnica(nonogram);
+                    }
+                    break;
+            }
             return true;
-        return false;
+        }else
+            return false;
     }
 }

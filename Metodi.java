@@ -1,38 +1,60 @@
+import java.sql.Array;
+
 import javax.lang.model.util.ElementScanner14;
 
 public class Metodi{
-    public static int[] aggiungo_int_al_vettore(int vet[],int num){//allunga vet inserendo in fondo al vettore num
-        int vet1[]=new int[1];
-        vet1[0]=num;
-        return aggiungo_int_al_vettore(vet,vet1);
+    /**
+     * 
+     * @param vet
+     * @return
+     */
+    public static int[] copia(int vet[]){
+        int result[]=new int[vet.length];
+        for(int i=0;i<result.length;i++)
+            result[i]=vet[i];
+        return result;
     }
-    public static int get_massimo(int vet[]){
-        int massimo=-1;
+    /**
+     * 
+     * @param celle
+     * @return
+     */
+    public static Cella[] copia(Cella celle[]){
+        Cella result[]=new Cella[celle.length];
+        for(int i=0;i<result.length;i++)
+            result[i]=celle[i].copia();
+        return result;
+    }
+    /**
+     * 
+     * @param vet
+     * @param base
+     */
+    public static void stampo_posiz(Cella vet[],int base){
         for(int i=0;i<vet.length;i++)
-            if(vet[i]>massimo)
-                massimo=vet[i];
-        return massimo;
+            System.out.print(vet[i].get_riga()*base+vet[i].get_colonna()+" ");
+        System.out.println("");
     }
-    public static int[] aggiungo_int_al_vettore(int vet[],int vet1[]){//toglie i numeri 
-        if(vet==null && vet1==null)
-            return new int[0];
-        if(vet==null)
-            return vet1;
-        if(vet1==null)
-            return vet;
-        int temp[]=new int[vet.length+vet1.length];
-        for(int i=0;i<vet.length;i++)
-            temp[i]=vet[i];
-        for(int i=0;i<vet1.length;i++)
-            temp[i+vet.length]=vet1[i];
-        return temp;
-    }
+
+    /**
+     * 
+     * @param vet1
+     * @param vet2
+     * @return
+     */
     public static int[][] aggiungo_vet_al_vettore(int vet1[][],int vet2[][]){//se vet1.length==0 ritorna vet2 e viceversa
         int temp[][]=vet1;
         for(int i=0;i<vet2.length;i++)
             temp=aggiungo_vet_al_vettore(temp,vet2[i]);
         return temp;
     }
+    
+    /**
+     * 
+     * @param vet1
+     * @param vet2
+     * @return
+     */
     public static int[][] aggiungo_vet_al_vettore(int vet1[][],int vet2[]){
         int temp[][]=new int[vet1.length+1][0];
         for(int i=0;i<vet1.length;i++){
@@ -45,6 +67,13 @@ public class Metodi{
             temp[vet1.length][i]=vet2[i];
         return temp;
     }
+    
+    /**
+     * Serve nella tecnica tentativi
+     * @param vet1
+     * @param vet2
+     * @return
+     */
     public static Nonogram[] aggiungo_vet_al_vettore(Nonogram vet1[],Nonogram vet2[]){
         Nonogram temp[]=new Nonogram[vet1.length+vet2.length];
         for(int i=0;i<vet1.length;i++)
@@ -53,110 +82,144 @@ public class Metodi{
             temp[i+vet1.length]=vet2[i];
         return temp;
     }
-    public static int[] rimiuovo_int_al_vettore(int vet[],int num){//allunga vet inserendo in fondo al vettore num
-        int vet1[]=new int[1];
-        vet1[0]=num;
-        return rimuovo_int_al_vettore(vet,vet1);
-    }
-    public static int[] rimuovo_int_al_vettore(int vet[],int vet1[]){
-        for(int i=0;i<vet1.length;i++)
-            vet=rimuovo_elementi_nella_posizione(vet,dove_elemento(vet, vet1[i], 0));
-        return vet;
-    }
-    public static int[] accorcio_lunghezza(int vet[],int cont){//se cont==0 ritorna new int[0]
+
+    /**
+     * 
+     * @param vet
+     * @param cont
+     * @return
+     */
+    private static int[] accorcio_lunghezza(int vet[],int cont){//se cont==0 ritorna new int[0]
         int temp[]=new int[cont];
         for(int i=0;i<cont;i++)
             temp[i]=vet[i];
         return temp;
     }
-    public static Cella[] accorcio_lunghezza(Cella vet[],int cont){
+
+    /**
+     * 
+     * @param vet
+     * @param cont
+     * @return
+     */
+    public static Cella[] accorcio_lunghezza(Cella vet[],int cont){//se cont==0 ritorna new int[0]
         Cella temp[]=new Cella[cont];
         for(int i=0;i<cont;i++)
             temp[i]=vet[i];
         return temp;
     }
-    public static int[][] accorcio_lunghezza(int vet[][],int cont){
-        int temp[][]=new int[cont][vet[0].length];
-        for(int i=0;i<cont;i++){
-            temp[i]=new int[vet[i].length];
-            for(int j=0;j<temp[i].length;j++)
-                temp[i][j]=vet[i][j];
-        }
-        return temp;
-    }
-    public static boolean ce_elemento(int vet[],int elemento){//ritorna true se ce un elemento di vet il cui valore è elemento
-        boolean trovato=false;
-        for(int i=0;i<vet.length && trovato==false;i++)
-            if(vet[i]==elemento)
-                trovato=true;
-        return trovato;
-    }
-    public static int dove_elemento(int vet[],int elemento){//ritorna l'indice della prima cella di vet[] dove c'è elemento altrimenti ritorna -1
-        for(int i=0;i<vet.length;i++)
-            if(vet[i]==elemento)
-                return i;
-        return -1;
-    }
-    public static int[] dove_elemento(int vet[],int elemento,int inutile){//ritorna un vettore formsto da tutti gli indici delle celle di vet dove puo andare elemento, se elemento non può andare in nessuna cella ritorna new int[0]
-        int vettore[]=new int[vet.length],cont=0;
-        for(int i=0;i<vet.length;i++)
-            if(vet[i]==elemento)
-                vettore[cont++]=i;
-        return accorcio_lunghezza(vettore,cont);
-    }
-    public static int[] rimuovo_elemento_nella_posizione(int vet[],int index){
-        int vet1[]=new int[1];
-        vet1[0]=index;
-        return rimuovo_elementi_nella_posizione(vet,vet1);
-    }
-    public static int[] rimuovo_elementi_nella_posizione(int vet[],int index[]){//toglie dal vettore gli elementi nele posizioni dettate da index[]
-        int new_vet[]=new int[vet.length-index.length],cont=0;
-        for(int i=0;i<vet.length;i++)
-            if(ce_elemento(index,i)==false)//se vet[i] non si trova oin index metto vet[i] in new_vet
-                new_vet[cont++]=vet[i];
-        return new_vet;
-    }
-    public static boolean uguali(int vet1[],int vet2[]){//se vet1 e vet2 hanno gli stessi elementi ritorna true
-        if(vet1.length!=vet2.length)
-            return false;
-        for(int i=0;i<vet1.length;i++)//cerco vet1[vet1.length-1] in vet2 se non lo trova rutorna false
-            if(vet1[vet1.length-1]==vet2[i]){
-                if(vet1.length==1)
-                    return true;
-                else
-                    return uguali(accorcio_lunghezza(vet1,vet1.length-1),rimuovo_elemento_nella_posizione(vet2,i));
-            }
-        return false;
-    }
-    public static Cella[] get_celle_riga(int index,Cella nonogram[][]){
-        Cella vet[]=new Cella[nonogram[index].length];
-        int cont=0;
-        for(int i=0;i<nonogram[index].length;i++)
-            if(nonogram[index][i].get_ce_nella_riga())
-                vet[cont++]=nonogram[index][i];
-        return accorcio_lunghezza(vet, cont);
-    }
-    public static Cella[] get_celle_colonna(int index,Cella nonogram[][]){
-        Cella vet[]=new Cella[nonogram.length];
-        int cont=0;
-        for(int i=0;i<nonogram.length;i++)
-            if(nonogram[i][index].get_ce_nella_colonna())
-                vet[cont++]=nonogram[i][index];
-        return accorcio_lunghezza(vet, cont);
-    }
-    public static Settore get_riga(int index,Cella nonogram[][]){
-        return new Settore(index,Enum.tipo_settore.riga,nonogram,nonogram[index].length,nonogram.length);
-    }
-    public static Settore get_riga(int index,int numeri[],Cella nonogram[][]){
-        return new Settore(index,Enum.tipo_settore.riga,nonogram,numeri,nonogram[0].length,nonogram.length);
-    }
-    public static Settore get_colonna(int index,int numeri[],Cella nonogram[][]){
-        return new Settore(index,Enum.tipo_settore.colonna,nonogram,numeri,nonogram[0].length,nonogram.length);
-    }
-    public static int[][] creo_ipotesi(int vet1[],int temp[][]){
-     /*vet1 contiene come va il settore ad inizio per ogni possibile ipotesi
-     * temp[i] contiene le varie configurazioni del fondo del settore dove allinizio ci va vet1
+
+    /**
+     * Il metodo ritorna il vettore che si ottiene togliendo da vet il primo elemento.
+     * The method throws an RuntimeException if vet.length==0 or if vet==null.
+     * @param vet vettore dal quale si costruisce il risultato
+     * @return
      */
+    public static int[] rimuovo_primo_elemento(int vet[]){
+        if(vet==null)
+            throw new NullPointerException("vet parameter is null");
+        if(vet.length==0)
+            throw new NegativeArraySizeException("vet.length is equals to 0");
+        int result[]=new int[vet.length-1];
+        for(int i=0;i<result.length;i++)
+            result[i]=vet[i+1];
+        return result;
+    }
+    /**
+     * Il metodo ritorna il vettore di celle che si ottiene togliendo le prime num_celle_rimosse dal vettore vet.
+     * vet rimane invariato e non viene modificato.
+     * Il vettore ritornato avrà le celle con lo stesso indirizzo di memoria delle celle di vet
+     * @param vet vettore da cui si costruisce il risultato
+     * @param num_celle_rimosse numero di celle che vengono rimosse dal vettore vet
+     * @return cio che si ottiene togliendo da vet le prime num_celle_rimosse
+     */
+    public static Cella[] rimuovo_celle(Cella[] vet,int num_celle_rimosse){
+        if(vet==null)
+            throw new NullPointerException("vet parameter is null");
+        if(num_celle_rimosse>vet.length)
+            throw new NegativeArraySizeException("num_celle_rimosse is gretaer then vet.length");
+        Cella result[]=new Cella[vet.length-num_celle_rimosse];
+        for(int i=0;i<result.length;i++)
+            result[i]=vet[i+num_celle_rimosse];
+        return result;
+    }
+
+    /**
+     * Il metodo ritornano le celle della riga/colona (il cui indice è index).
+     * Questo settore viene estratto dalla matrice di celle nonogram
+     * @param type stabilisce se viene presa la riga o la colonna
+     * @param index 
+     * @param nonogram
+     * @return
+     */
+    public static Cella[] get_settore(Enum.tipo_settore type,int index,Cella nonogram[][]){
+        try{
+            switch(type){
+                case riga:
+                    return get_riga(index,nonogram);
+                case colonna:
+                    return get_colonna(index,nonogram);
+                default:
+                    throw new RuntimeException("Non ci arriva mai qui");
+            }
+        }catch(NullPointerException e){
+            throw new NullPointerException("the type parameter is null");
+        }
+    }
+
+    /**
+     * 
+     * @param index
+     * @param nonogram
+     * @return
+     */
+    public static Cella[] get_riga(int index,Cella nonogram[][]){
+        try{
+            Cella risultato[]=new Cella[nonogram[index].length];
+            for(int i=0;i<risultato.length;i++)
+                risultato[i]=nonogram[index][i];
+            return risultato;
+        }catch(NullPointerException e){
+            if(nonogram==null)
+                throw new NullPointerException("nonogram parameter is null");
+            else if(nonogram[index]==null)
+                throw new NullPointerException("nonogram["+index+"] is null");
+        }catch(ArrayIndexOutOfBoundsException e){
+            throw new ArrayIndexOutOfBoundsException("index non è compagtibile con nonogram.length.\nindex: "+index+".\nnonogram.length: "+nonogram.length);
+        }
+        throw new RuntimeException("Non ci arriva mai qui");
+    }
+
+    /**
+     * 
+     * @param index
+     * @param nonogram
+     * @return
+     */
+    public static Cella[] get_colonna(int index,Cella nonogram[][]){
+        int i=0;
+        try{
+            Cella risultato[]=new Cella[nonogram.length];
+            for(i=0;i<risultato.length;i++)
+                risultato[i]=nonogram[i][index];
+            return risultato;
+        }catch(NullPointerException e){
+            if(nonogram==null)
+                throw new NullPointerException("nonogram parameter is null");
+            else //sicuramente nonogram[i] è null. non ci sono altri casi
+                throw new NullPointerException("nonogram[i] e' null.\ni: "+i);
+        }catch(ArrayIndexOutOfBoundsException e){
+            throw new ArrayIndexOutOfBoundsException("index non è compatibile con la lunghezza di nonogram["+i+"].\nindex: "+index+".\nnonogram[i].length: "+nonogram[i].length);
+        }
+    }
+
+    /**
+     * 
+     * @param vet1
+     * @param temp
+     * @return
+     */
+    public static int[][] creo_ipotesi(int vet1[],int temp[][]){
         if(temp.length==0)
             return new int[0][0];
         int vet[][]=new int[temp.length][temp[0].length+vet1.length];
@@ -169,333 +232,330 @@ public class Metodi{
         return vet;
     }
 
+    /**
+     * 
+     * @param vet
+     */
     public static void stampo(int vet[]){
         for(int i=0;i<vet.length;i++)
             System.out.print(vet[i]+" ");
         System.out.println("");
     }
+    /**
+     * 
+     * @param vet
+     */
     public static void stampo(int vet[][]){
         for(int i=0;i<vet.length;i++)
             stampo(vet[i]);
     }
-    public static void stampo_carattere(Cella settore[]){
-        for(int i=0;i<settore.length;i++)
-            if(settore[i].get_carattere()=="   ")
-            System.out.print(" - ");
-        else 
-            System.out.print(settore[i].get_carattere());
-        System.out.println("");
+
+    /**
+     * The method returns a matric of white cells
+     * @param base number of column of the returned matrix
+     * @param altezza number of rows of the returned matrix
+     * @return matrix's white-cells
+     */
+    public static Cella[][] creo_tabella_di_celle(int base,int altezza){
+        Cella result[][]=new Cella[altezza][base];
+        for(int i=0;i<altezza;i++)
+            for(int j=0;j<base;j++)
+                result[i][j]=new Cella(i,j);
+        return result;
     }
-    public static void stampo_carattere(Cella nonogram[][]){
-        for(int i=0;i<nonogram.length;i++)
-            stampo_carattere(nonogram[i]);
-    }
-    public static void stampo(Cella nonogram[][],int numeri_righe[][],int numeri_colonne[][]){
-        Nonogram temp=new Nonogram(nonogram[0].length,nonogram.length,nonogram,numeri_righe,numeri_colonne);
-        temp.stampo();
-    }
-    public static void stampo_posiz(Cella nonogram[][]){
-        for(int i=0;i<nonogram.length;i++)
-            stampo_posiz(nonogram[i]);
-    }
-    public static void stampo_posiz(Cella vet[]){
-        for(int i=0;i<vet.length;i++)
-            System.out.print(vet[i].get_posiz()+" ");
-        System.out.println("");
-    }
-    public static void stampo_vettori(int temp1[],int temp[][],int vet1[][]){
-        System.out.print("temp1: ( il risultato di costruisco_temp() ): ");
-        stampo(temp1);
-        System.out.println("temp() ( il risultato di settore.tecnica() ): ");
-        stampo(temp);
-        System.out.println("vet1: ( il risultato di creo_ipotesi() ): ");
-        stampo(vet1);
-    }
-    public static boolean finito(Cella nonogram[][]){
-        for(int i=0;i<nonogram.length;i++)
-            for(int j=0;j<nonogram[i].length;j++)
-                if(nonogram[i][j].get_carattere()=="   ")
-                    return false;
-        return true;
-    }
+    
     public static Nonogram creo_nonogram(int numero){
         int numeri[]=new int[100];
+        Settore vet_riga[]=new Settore[15],vet_colonna[]=new Settore[15];
+        Cella celle[][]=new Cella[15][15];
+        for(int i=0;i<15;i++)
+            for(int j=0;j<15;j++)
+                celle[i][j]=new Cella(i,j);
         switch(numero){
             case 1:
-                Nonogram nonogram=new Nonogram(15,15);
                 numeri[0]=2; numeri[1]=2;
-                nonogram.get_riga(0).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_riga[0]=new Settore(Enum.tipo_settore.riga,0,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=5; numeri[1]=5;
-                nonogram.get_riga(1).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_riga[1]=new Settore(Enum.tipo_settore.riga,1,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=15;
-                nonogram.get_riga(2).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
+                vet_riga[2]=new Settore(Enum.tipo_settore.riga,2,Metodi.accorcio_lunghezza(numeri, 1),celle);
 
                 numeri[0]=13;
-                nonogram.get_riga(3).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
+                vet_riga[3]=new Settore(Enum.tipo_settore.riga,3,Metodi.accorcio_lunghezza(numeri, 1),celle);
 
                 numeri[0]=6; numeri[1]=4;
-                nonogram.get_riga(4).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_riga[4]=new Settore(Enum.tipo_settore.riga,4,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=2; numeri[1]=2; numeri[2]=2;
-                nonogram.get_riga(5).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_riga[5]=new Settore(Enum.tipo_settore.riga,5,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=11;
-                nonogram.get_riga(6).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
+                vet_riga[6]=new Settore(Enum.tipo_settore.riga,6,Metodi.accorcio_lunghezza(numeri, 1),celle);
 
                 numeri[0]=2; numeri[1]=2;
-                nonogram.get_riga(7).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_riga[7]=new Settore(Enum.tipo_settore.riga,7,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=2; numeri[1]=2;
-                nonogram.get_riga(8).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_riga[8]=new Settore(Enum.tipo_settore.riga,8,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=4; numeri[1]=4;
-                nonogram.get_riga(9).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_riga[9]=new Settore(Enum.tipo_settore.riga,9,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=2; numeri[1]=2;
-                nonogram.get_riga(10).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_riga[10]=new Settore(Enum.tipo_settore.riga,10,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=2; numeri[1]=2;
-                nonogram.get_riga(11).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_riga[11]=new Settore(Enum.tipo_settore.riga,11,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=2; numeri[1]=2;
-                nonogram.get_riga(12).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_riga[12]=new Settore(Enum.tipo_settore.riga,12,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=2; numeri[1]=2; numeri[2]=3; numeri[3]=2; numeri[4]=2;
-                nonogram.get_riga(13).set_numeri(Metodi.accorcio_lunghezza(numeri, 5));
+                vet_riga[13]=new Settore(Enum.tipo_settore.riga,13,Metodi.accorcio_lunghezza(numeri, 5),celle);
 
                 numeri[0]=3; numeri[1]=5; numeri[2]=3;
-                nonogram.get_riga(14).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
-                    //COLONNE
+                vet_riga[14]=new Settore(Enum.tipo_settore.riga,14,Metodi.accorcio_lunghezza(numeri, 3),celle);
+                    
+                //COLONNE
+                
                 numeri[0]=2; numeri[1]=2;
-                nonogram.get_colonna(0).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_colonna[0]=new Settore(Enum.tipo_settore.colonna,0,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=4; numeri[1]=2;
-                nonogram.get_colonna(1).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_colonna[1]=new Settore(Enum.tipo_settore.colonna,1,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=5; numeri[1]=1; numeri[2]=1; numeri[3]=1;
-                nonogram.get_colonna(2).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
+                vet_colonna[2]=new Settore(Enum.tipo_settore.colonna,2,Metodi.accorcio_lunghezza(numeri, 4),celle);
 
                 numeri[0]=13;
-                nonogram.get_colonna(3).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
+                vet_colonna[3]=new Settore(Enum.tipo_settore.colonna,3,Metodi.accorcio_lunghezza(numeri, 1),celle);
 
                 numeri[0]=13;
-                nonogram.get_colonna(4).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
+                vet_colonna[4]=new Settore(Enum.tipo_settore.colonna,4,Metodi.accorcio_lunghezza(numeri, 1),celle);
 
                 numeri[0]=3; numeri[1]=1; numeri[2]=1; numeri[3]=1;
-                nonogram.get_colonna(5).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
+                vet_colonna[5]=new Settore(Enum.tipo_settore.colonna,5,Metodi.accorcio_lunghezza(numeri, 4),celle);
 
                 numeri[0]=5; numeri[1]=2;
-                nonogram.get_colonna(6).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_colonna[6]=new Settore(Enum.tipo_settore.colonna,6,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=5; numeri[1]=2;
-                nonogram.get_colonna(7).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_colonna[7]=new Settore(Enum.tipo_settore.colonna,7,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=2; numeri[1]=1; numeri[2]=2;
-                nonogram.get_colonna(8).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_colonna[8]=new Settore(Enum.tipo_settore.colonna,8,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=3; numeri[1]=1; numeri[2]=1; numeri[3]=1;
-                nonogram.get_colonna(9).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
+                vet_colonna[9]=new Settore(Enum.tipo_settore.colonna,9,Metodi.accorcio_lunghezza(numeri, 4),celle);
 
                 numeri[0]=13;
-                nonogram.get_colonna(10).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
+                vet_colonna[10]=new Settore(Enum.tipo_settore.colonna,10,Metodi.accorcio_lunghezza(numeri, 1),celle);
 
                 numeri[0]=13;
-                nonogram.get_colonna(11).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
+                vet_colonna[11]=new Settore(Enum.tipo_settore.colonna,11,Metodi.accorcio_lunghezza(numeri, 1),celle);
 
                 numeri[0]=5; numeri[1]=1; numeri[2]=1; numeri[3]=1;
-                nonogram.get_colonna(12).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
+                vet_colonna[12]=new Settore(Enum.tipo_settore.colonna,12,Metodi.accorcio_lunghezza(numeri, 4),celle);
 
                 numeri[0]=4; numeri[1]=2;
-                nonogram.get_colonna(13).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_colonna[13]=new Settore(Enum.tipo_settore.colonna,13,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=2; numeri[1]=2;
-                nonogram.get_colonna(14).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
-                return nonogram;
+                vet_colonna[14]=new Settore(Enum.tipo_settore.colonna,14,Metodi.accorcio_lunghezza(numeri, 2),celle);
+                return new Nonogram(vet_riga, vet_colonna, celle);
             case 2:
-                nonogram=new Nonogram(15,15);
                 numeri[0]=2; numeri[1]=9;
-                nonogram.get_riga(0).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_riga[0]=new Settore(Enum.tipo_settore.riga,0,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=2; numeri[1]=9;
-                nonogram.get_riga(1).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_riga[1]=new Settore(Enum.tipo_settore.riga,1,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=1; numeri[1]=8; numeri[2]=1;
-                nonogram.get_riga(2).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_riga[2]=new Settore(Enum.tipo_settore.riga,2,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=1; numeri[1]=7; numeri[2]=2;
-                nonogram.get_riga(3).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_riga[3]=new Settore(Enum.tipo_settore.riga,3,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=6; numeri[1]=1; numeri[2]=3;
-                nonogram.get_riga(4).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_riga[4]=new Settore(Enum.tipo_settore.riga,4,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=5; numeri[1]=2; numeri[2]=4;
-                nonogram.get_riga(5).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_riga[5]=new Settore(Enum.tipo_settore.riga,5,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=2; numeri[1]=1; numeri[2]=4;
-                nonogram.get_riga(6).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_riga[6]=new Settore(Enum.tipo_settore.riga,6,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=1; numeri[1]=3; numeri[2]=2; numeri[3]=3;
-                nonogram.get_riga(7).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
+                vet_riga[7]=new Settore(Enum.tipo_settore.riga,7,Metodi.accorcio_lunghezza(numeri, 4),celle);
 
                 numeri[0]=4; numeri[1]=2; numeri[2]=3;
-                nonogram.get_riga(8).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_riga[8]=new Settore(Enum.tipo_settore.riga,8,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=5; numeri[1]=3; numeri[2]=3;
-                nonogram.get_riga(9).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_riga[9]=new Settore(Enum.tipo_settore.riga,9,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=2; numeri[1]=4; numeri[2]=2; numeri[3]=1;
-                nonogram.get_riga(10).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
+                vet_riga[10]=new Settore(Enum.tipo_settore.riga,10,Metodi.accorcio_lunghezza(numeri, 4),celle);
 
                 numeri[0]=3; numeri[1]=3; numeri[2]=2; numeri[3]=2;
-                nonogram.get_riga(11).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
+                vet_riga[11]=new Settore(Enum.tipo_settore.riga,11,Metodi.accorcio_lunghezza(numeri, 4),celle);
 
                 numeri[0]=6; numeri[1]=2; numeri[2]=3;
-                nonogram.get_riga(12).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_riga[12]=new Settore(Enum.tipo_settore.riga,12,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=1; numeri[1]=3; numeri[2]=3;
-                nonogram.get_riga(13).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_riga[13]=new Settore(Enum.tipo_settore.riga,13,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=2; numeri[1]=8;
-                nonogram.get_riga(14).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
-                    //COLONNE
+                vet_riga[14]=new Settore(Enum.tipo_settore.riga,14,Metodi.accorcio_lunghezza(numeri, 2),celle);
+                    
+                //COLONNE
+                
                 numeri[0]=8; numeri[1]=2;
-                nonogram.get_colonna(0).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_colonna[0]=new Settore(Enum.tipo_settore.colonna,0,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=2; numeri[1]=3; numeri[2]=4; numeri[3]=1;
-                nonogram.get_colonna(1).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
+                vet_colonna[1]=new Settore(Enum.tipo_settore.colonna,1,Metodi.accorcio_lunghezza(numeri, 4),celle);
 
                 numeri[0]=2; numeri[1]=6;
-                nonogram.get_colonna(2).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_colonna[2]=new Settore(Enum.tipo_settore.colonna,2,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=5; numeri[1]=3; numeri[2]=2;
-                nonogram.get_colonna(3).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_colonna[3]=new Settore(Enum.tipo_settore.colonna,3,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=6; numeri[1]=3; numeri[2]=1;
-                nonogram.get_colonna(4).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_colonna[4]=new Settore(Enum.tipo_settore.colonna,4,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=5; numeri[1]=1; numeri[2]=2; numeri[3]=1;
-                nonogram.get_colonna(5).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
+                vet_colonna[5]=new Settore(Enum.tipo_settore.colonna,5,Metodi.accorcio_lunghezza(numeri, 4),celle);
 
                 numeri[0]=4; numeri[1]=1; numeri[2]=3;
-                nonogram.get_colonna(6).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_colonna[6]=new Settore(Enum.tipo_settore.colonna,6,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=4; numeri[1]=1; numeri[2]=3; numeri[3]=1;
-                nonogram.get_colonna(7).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
+                vet_colonna[7]=new Settore(Enum.tipo_settore.colonna,7,Metodi.accorcio_lunghezza(numeri, 4),celle);
 
                 numeri[0]=5; numeri[1]=3; numeri[2]=2;
-                nonogram.get_colonna(8).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_colonna[8]=new Settore(Enum.tipo_settore.colonna,8,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=4; numeri[1]=3; numeri[2]=3;
-                nonogram.get_colonna(9).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_colonna[9]=new Settore(Enum.tipo_settore.colonna,9,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=3; numeri[1]=3; numeri[2]=4;
-                nonogram.get_colonna(10).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_colonna[10]=new Settore(Enum.tipo_settore.colonna,10,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=2; numeri[1]=2; numeri[2]=2; numeri[3]=1;
-                nonogram.get_colonna(11).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
+                vet_colonna[11]=new Settore(Enum.tipo_settore.colonna,11,Metodi.accorcio_lunghezza(numeri, 4),celle);
 
                 numeri[0]=1; numeri[1]=7; numeri[2]=3;
-                nonogram.get_colonna(12).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                vet_colonna[12]=new Settore(Enum.tipo_settore.colonna,12,Metodi.accorcio_lunghezza(numeri, 3),celle);
 
                 numeri[0]=7; numeri[1]=4;
-                nonogram.get_colonna(13).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_colonna[13]=new Settore(Enum.tipo_settore.colonna,13,Metodi.accorcio_lunghezza(numeri, 2),celle);
 
                 numeri[0]=13;
-                nonogram.get_colonna(14).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
-                return nonogram;
-            case 3:
-                nonogram=new Nonogram(15,15);
-                numeri[0]=2; numeri[1]=6;
-                nonogram.get_riga(0).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                vet_colonna[14]=new Settore(Enum.tipo_settore.colonna,14,Metodi.accorcio_lunghezza(numeri, 1),celle);
+                return new Nonogram(vet_riga,vet_colonna,celle);
+            case 3://ALTERNATIVE WAY
+                int numeri_righe[][]=new int[15][0],numeri_colonne[][]=new int[15][0];
+                numeri_righe[0]=new int[2];
+                numeri_righe[0][0]=2; numeri_righe[0][1]=6;
 
-                numeri[0]=8; numeri[1]=4;
-                nonogram.get_riga(1).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                numeri_righe[1]=new int[2];
+                numeri_righe[1][0]=8; numeri_righe[1][1]=4;
 
-                numeri[0]=5; numeri[1]=7;
-                nonogram.get_riga(2).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                numeri_righe[2]=new int[2];
+                numeri_righe[2][0]=5; numeri_righe[2][1]=7;
 
-                numeri[0]=2; numeri[1]=9; numeri[2]=2;
-                nonogram.get_riga(3).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                numeri_righe[3]=new int[3];
+                numeri_righe[3][0]=2; numeri_righe[3][1]=9; numeri_righe[3][2]=2;
 
-                numeri[0]=1; numeri[1]=7; numeri[2]=1;
-                nonogram.get_riga(4).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                numeri_righe[4]=new int[3];
+                numeri_righe[4][0]=1; numeri_righe[4][1]=7; numeri_righe[4][2]=1;
 
-                numeri[0]=1; numeri[1]=5;
-                nonogram.get_riga(5).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                numeri_righe[5]=new int[2];
+                numeri_righe[5][0]=1; numeri_righe[5][1]=5;
 
-                numeri[0]=9;
-                nonogram.get_riga(6).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
+                numeri_righe[6]=new int[1];
+                numeri_righe[6][0]=9;
 
-                numeri[0]=1; numeri[1]=1; numeri[2]=1; numeri[3]=1;
-                nonogram.get_riga(7).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
+                numeri_righe[7]=new int[4];
+                numeri_righe[7][0]=1; numeri_righe[7][1]=1; numeri_righe[7][2]=1; numeri_righe[7][3]=1;
 
-                numeri[0]=11;
-                nonogram.get_riga(8).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
+                numeri_righe[8]=new int[1];
+                numeri_righe[8][0]=11;
 
-                numeri[0]=2; numeri[1]=1; numeri[2]=1;numeri[3]=1;
-                nonogram.get_riga(9).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
+                numeri_righe[9]=new int[4];
+                numeri_righe[9][0]=2; numeri_righe[9][1]=1; numeri_righe[9][2]=1;numeri_righe[9][3]=1;
 
-                numeri[0]=11;
-                nonogram.get_riga(10).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
+                numeri_righe[10]=new int[1];
+                numeri_righe[10][0]=11;
 
-                numeri[0]=1; numeri[1]=1; numeri[2]=1; numeri[3]=1; numeri[4]=1;
-                nonogram.get_riga(11).set_numeri(Metodi.accorcio_lunghezza(numeri, 5));
+                numeri_righe[11]=new int[5];
+                numeri_righe[11][0]=1; numeri_righe[11][1]=1; numeri_righe[11][2]=1; numeri_righe[11][3]=1; numeri_righe[11][4]=1;
 
-                numeri[0]=11;
-                nonogram.get_riga(12).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
+                numeri_righe[12]=new int[1];
+                numeri_righe[12][0]=11;
 
-                numeri[0]=1; numeri[1]=1; numeri[2]=2;
-                nonogram.get_riga(13).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                numeri_righe[13]=new int[3];
+                numeri_righe[13][0]=1; numeri_righe[13][1]=1; numeri_righe[13][2]=2;
 
-                numeri[0]=7;
-                nonogram.get_riga(14).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
-                    //COLONNE
-                numeri[0]=3; 
-                nonogram.get_colonna(0).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
+                numeri_righe[14]=new int[1];
+                numeri_righe[14][0]=7;
+                    
+                //COLONNE
+                
+                numeri_colonne[0]=new int[1];
+                numeri_colonne[0][0]=3; 
 
-                numeri[0]=3;
-                nonogram.get_colonna(1).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
+                numeri_colonne[1]=new int[1];
+                numeri_colonne[1][0]=3;
 
-                numeri[0]=3; numeri[1]=5;
-                nonogram.get_colonna(2).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
+                numeri_colonne[2]=new int[2];
+                numeri_colonne[2][0]=3; numeri_colonne[2][1]=5;
 
-                numeri[0]=4; numeri[1]=5; numeri[2]=2;
-                nonogram.get_colonna(3).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                numeri_colonne[3]=new int[3];
+                numeri_colonne[3][0]=4; numeri_colonne[3][1]=5; numeri_colonne[3][2]=2;
 
-                numeri[0]=4; numeri[1]=1; numeri[2]=1;numeri[3]=1; numeri[4]=1; numeri[5]=1;
-                nonogram.get_colonna(4).set_numeri(Metodi.accorcio_lunghezza(numeri, 6));
+                numeri_colonne[4]=new int[6];
+                numeri_colonne[4][0]=4; numeri_colonne[4][1]=1; numeri_colonne[4][2]=1;numeri_colonne[4][3]=1; numeri_colonne[4][4]=1; numeri_colonne[4][5]=1;
 
-                numeri[0]=9; numeri[1]=3; numeri[2]=1; 
-                nonogram.get_colonna(5).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                numeri_colonne[5]=new int[3];
+                numeri_colonne[5][0]=9; numeri_colonne[5][1]=3; numeri_colonne[5][2]=1; 
 
-                numeri[0]=2; numeri[1]=4; numeri[2]=3; numeri[3]=3;
-                nonogram.get_colonna(6).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
+                numeri_colonne[6]=new int[4];
+                numeri_colonne[6][0]=2; numeri_colonne[6][1]=4; numeri_colonne[6][2]=3; numeri_colonne[6][3]=3;
 
-                numeri[0]=7; numeri[1]=1; numeri[2]=3; numeri[3]=1;
-                nonogram.get_colonna(7).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
+                numeri_colonne[7]=new int[4];
+                numeri_colonne[7][0]=7; numeri_colonne[7][1]=1; numeri_colonne[7][2]=3; numeri_colonne[7][3]=1;
 
-                numeri[0]=11; numeri[1]=1; numeri[2]=1;
-                nonogram.get_colonna(8).set_numeri(Metodi.accorcio_lunghezza(numeri, 3));
+                numeri_colonne[8]=new int[3];
+                numeri_colonne[8][0]=11; numeri_colonne[8][1]=1; numeri_colonne[8][2]=1;
 
-                numeri[0]=1; numeri[1]=5; numeri[2]=1; numeri[3]=1; numeri[4]=1; numeri[5]=1;
-                nonogram.get_colonna(9).set_numeri(Metodi.accorcio_lunghezza(numeri, 6));
+                numeri_colonne[9]=new int[6];
+                numeri_colonne[9][0]=1; numeri_colonne[9][1]=5; numeri_colonne[9][2]=1; numeri_colonne[9][3]=1; numeri_colonne[9][4]=1; numeri_colonne[9][5]=1;
 
-                numeri[0]=5; numeri[1]=1; numeri[2]=1; numeri[3]=5;
-                nonogram.get_colonna(10).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
-                numeri[0]=3; numeri[1]=3; numeri[2]=1; numeri[3]=2;
-                nonogram.get_colonna(11).set_numeri(Metodi.accorcio_lunghezza(numeri, 4));
-                numeri[0]=2; numeri[1]=5;
-                nonogram.get_colonna(12).set_numeri(Metodi.accorcio_lunghezza(numeri, 2));
-                numeri[0]=3;
-                nonogram.get_colonna(13).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
-                numeri[0]=2;
-                nonogram.get_colonna(14).set_numeri(Metodi.accorcio_lunghezza(numeri, 1));
-                return nonogram;
+                numeri_colonne[10]=new int[4];
+                numeri_colonne[10][0]=5; numeri_colonne[10][1]=1; numeri_colonne[10][2]=1; numeri_colonne[10][3]=5;
+                
+                numeri_colonne[11]=new int[4];
+                numeri_colonne[11][0]=3; numeri_colonne[11][1]=3; numeri_colonne[11][2]=1; numeri_colonne[11][3]=2;
+                
+                numeri_colonne[12]=new int[2];
+                numeri_colonne[12][0]=2; numeri_colonne[12][1]=5;
+                
+                numeri_colonne[13]=new int[1];
+                numeri_colonne[13][0]=3;
 
+                numeri_colonne[14]=new int[1];
+                numeri_colonne[14][0]=2;
+                
+                return new Nonogram(numeri_righe,numeri_colonne);
+            default:
+                throw new RuntimeException("Caso non riconosciuto.\nnumero: "+numero);
         }
-        return new Nonogram(0,0);
     }
 
 }
