@@ -1,121 +1,121 @@
-import java.rmi.registry.RegistryHandler;
+//import java.rmi.registry.RegistryHandler;
 import java.util.Scanner;
-import javax.lang.model.util.ElementScanner14;
+
+//import javax.lang.model.util.ElementScanner14;
+/**
+ * An object of Nonogram class represent a Nonogram.
+ * Any Nonogram have:
+ * 1)a matrix of cells.(it represents all cells of the nonogram)
+ */
 public class Nonogram{
     public static void main(String[] args)
     {
-        Nonogram nonogram=Metodi.creo_nonogram(3);
-        nonogram.stampo(0);
-        nonogram.stampo();
-        nonogram.risolvo();
-        nonogram.stampo();
+        Nonogram meme=Metodi.creo_nonogram(1);
+        meme.stampo();
+        meme.risolvo();
+        meme.stampo();
     }
-    private Cella celle[][];
-    public void set_cella(int i,int j,String carattere){
-        celle[i][j].set_carattere(carattere);
-    }
-    public void set_celle(Cella nonogram[][]){
-        this.celle=nonogram;
-    }
-    public void set_celle(){
-        celle=new Cella[altezza][base];
-        for(int i=0;i<altezza;i++)
-            for(int j=0;j<base;j++)
-                celle[i][j]=new Cella("   ",i*base+j,base,altezza);
-    }
+    final private Cella celle[][];
+    /**
+     * This vector represents the rows of the nonogram
+     */
+    final private Settore vet_righe[];
+    /**
+     * This vector represents the columns of the nonogram
+     */
+    final private Settore vet_colonne[];
+    final private int base;
+    final private int altezza;
+
     public Cella[][] get_celle(){
         return celle;
     }
-    public Cella get_cella(int i,int j){
-        return celle[i][j];
-    }
-    private Settore vet_righe[];
-    private Settore vet_colonne[];
+
     public Settore get_riga(int index){
-        return vet_righe[index];
+        try{
+            return vet_righe[index];
+        }catch(NullPointerException e){
+            throw new NullPointerException("vet_righe is null.");
+        }catch(ArrayIndexOutOfBoundsException e){
+            throw new ArrayIndexOutOfBoundsException("the index "+index+" is not correct because the nonogram has "+vet_righe.length+" rows");
+        }
     }
+
     public Settore get_colonna(int index){
-        return vet_colonne[index];
+        try{
+            return vet_colonne[index];
+        }catch(NullPointerException e){
+            throw new NullPointerException("vet_colonne is null.");
+        }catch(ArrayIndexOutOfBoundsException e){
+            throw new ArrayIndexOutOfBoundsException("the index "+index+" is not correct because the nonogram has "+vet_righe.length+" columns");
+        }
     }
-    public void set_settori(){
-        vet_righe=new Settore[altezza];
-        vet_colonne=new Settore[base];
-        for(int i=0;i<altezza;i++)
-            vet_righe[i]=new Settore(i,"Riga",celle,base,altezza);
-        for(int i=0;i<base;i++)
-            vet_colonne[i]=new Settore(i,"Colonna",celle,base,altezza);
-    }
-    public void set_riga(int i,Settore riga){
-        vet_righe[i]=riga;
-    }
-    public void set_colonna(int i,Settore colonna){
-        vet_colonne[i]=colonna;
-    }
-    private int base;
-    private int altezza;
-    public void set_base(int base){
-        this.base=base;
-    }
-    public void set_altezza(int altezza){
-        this.altezza=altezza;
-    }
+
+   
+
     public int get_base(){
         return base;
     }
     public int get_altezza(){
         return altezza;
     }
-    public Nonogram(int base,int altezza){
-        this.base=base;
-        this.altezza=altezza;
-        set_celle();
-        set_settori();
+    /**
+     * Il metodo non controlla che celle sia una matrice quadrata di celle con attributi riga/colonna coincidenti
+     * con l'indice che ha la cella nella matrice celle[][].
+     * Inoltre le celle dei settori devono coincidere con le celle di celle,
+     * Il metodo non controlla che i parametri siano diversi da null
+     * @param vet_righe
+     * @param vet_colonne
+     * @param celle
+     */
+    public Nonogram(Settore vet_righe[],Settore vet_colonne[],Cella celle[][]){
+        this.vet_righe=vet_righe;
+        this.vet_colonne=vet_colonne;
+        this.celle=celle;
+        this.base=celle[0].length;
+        this.altezza=celle.length;
+
     }
-    public Nonogram(int base,int altezza,int numeri_righe[][],int numeri_colonne[][]){
-        this(base,altezza);
-        set_numeri(numeri_righe,numeri_colonne);
+    public Nonogram(int numeri_righe[][],int numeri_colonne[][],Cella celle[][]){
+        this.celle=celle;
+        this.vet_righe=new Settore[numeri_righe.length];
+        this.vet_colonne=new Settore[numeri_colonne.length];  
+        for(int i=0;i<numeri_righe.length;i++)
+            vet_righe[i]=new Settore(Enum.tipo_settore.riga,i,numeri_righe[i],Metodi.get_riga(i, celle));
+        for(int i=0;i<numeri_colonne.length;i++)
+            vet_colonne[i]=new Settore(Enum.tipo_settore.colonna,i,numeri_colonne[i],Metodi.get_colonna(i, celle));
+        this.base=numeri_colonne.length;
+        this.altezza=numeri_righe.length;
     }
-    public Nonogram(int base,int altezza,Cella nonogram[][],int numeri_righe[][],int numeri_colonne[][]){
-        this(base,altezza,numeri_righe,numeri_colonne);
-        set_celle(nonogram);
+    public Nonogram(int numeri_righe[][],int numeri_colonne[][]){
+        this(numeri_righe,numeri_colonne,Metodi.creo_tabella_di_celle(numeri_colonne.length, numeri_righe.length));
     }
     //METODI DI CLASSE
-    public void set_numeri(int numeri_righe[][],int numeri_colonne[][]){
-        for(int i=0;i<altezza;i++)
-            vet_righe[i].set_numeri(numeri_righe[i]);
-        for(int i=0;i<base;i++)
-            vet_colonne[i].set_numeri(numeri_colonne[i]);
-    }
-    public int massimo_righe(){//ritorna quanto è lungo la riga con piu indizi
-        int massimo=-1;
+    //Ritorna il numero di blocchi che ha la riga con più blocchi
+    public int massimo_righe(){
+        int max=-1;
         for(int i=0;i<vet_righe.length;i++)
-            if(vet_righe[i].get_numeri().length>massimo)
-                massimo=vet_righe[i].get_numeri().length;
-        return massimo;
+            if(max<vet_righe[i].get_numeri().length)
+                max=vet_righe[i].get_numeri().length;
+        return max;
     }
-    public int massimo_colonne(){//ritorna quanto è lungo la riga con piu indizi
-        int massimo=-1;
+    //ritorna il numero di blocchi che ha la colonna con più blocchi
+    public int massimo_colonne(){
+        int max=-1;
         for(int i=0;i<vet_colonne.length;i++)
-            if(vet_colonne[i].get_numeri().length>massimo)
-                massimo=vet_colonne[i].get_numeri().length;
-        return massimo;
+            if(max<vet_colonne[i].get_numeri().length)
+                max=vet_colonne[i].get_numeri().length;
+        return max;
     }
-    public void leggo(){
-        System.out.println("Inserire righe:");
-        for(int i=0;i<altezza;i++)//per ogni riga   
-            vet_righe[i].leggo();
-        System.out.println("Inserire colonne:");
-        for(int i=0;i<base;i++)
-            vet_colonne[i].leggo();
-    }
+
     public void stampo(int inutile){
         for(int i=0;i<altezza;i++){
             System.out.print("Riga "+i+": ");
-            Metodi.stampo(get_riga(i).get_numeri());
+            Metodi.stampo(vet_righe[i].get_numeri());
         }
         for(int i=0;i<base;i++){
             System.out.print("colonna "+i+": ");
-            Metodi.stampo(get_colonna(i).get_numeri());
+            Metodi.stampo(vet_colonne[i].get_numeri());
         }
     }
     public void stampo(){
@@ -145,23 +145,27 @@ public class Nonogram{
                 else
                     System.out.print(" "+vet_righe[i].get_numero(j)+" ");
             for(int j=0;j<base;j++)
-                System.out.print(celle[i][j].get_carattere());
+                System.out.print(celle[i][j].get_carattere().toString());
             System.out.println("");
         }
     }
     public boolean finito(){
-        return Metodi.finito(this.celle);
+        for(int i=0;i<altezza;i++)
+            for(int j=0;j<base;j++)
+                if(celle[i][j].get_carattere()==Enum.tipo_carattere.vuoto)
+                    return false;
+        return true;
     }
     public int[][] get_numeri_righe(){
         int numeri_righe[][]=new int[altezza][0];
         for(int i=0;i<altezza;i++)
-            numeri_righe[i]=get_riga(i).get_numeri();
+            numeri_righe[i]=vet_righe[i].get_numeri();
         return numeri_righe;
     }
     public int[][] get_numeri_colonne(){
         int numeri_colonne[][]=new int[base][0];
         for(int i=0;i<base;i++)
-            numeri_colonne[i]=get_colonna(i).get_numeri();
+            numeri_colonne[i]=vet_colonne[i].get_numeri();
         return numeri_colonne;
     }
     public boolean assurdo(){//ritorna true se il nonogram è assurdo 
@@ -173,47 +177,43 @@ public class Nonogram{
                 return true;
         return false;
     }
-    public Nonogram copia_nonogram(){
-        Nonogram nonogram=new Nonogram(base,altezza);
+    public Nonogram copia(){
+        Nonogram risultato=new Nonogram(get_numeri_righe(),get_numeri_colonne());
         for(int i=0;i<altezza;i++)
-            nonogram.set_riga(i,vet_righe[i].copia_settore());
-        for(int j=0;j<base;j++)
-            nonogram.set_colonna(j,vet_colonne[j].copia_settore());
-        return nonogram;
+            for(int j=0;j<base;j++)
+                switch(celle[i][j].get_carattere()){
+                    case blocco:
+                        risultato.get_celle()[i][j].set_blocco();
+                        break;
+                    case x:
+                        risultato.get_celle()[i][j].set_x();
+                        break;
+                    case vuoto:
+                        break;
+                }
+        return risultato;
     }
     //TECNICHE RISOLUTIVE
     public boolean risolvo(){
-        Scanner tastiera=new Scanner(System.in);
         for(int i=0;i<altezza;i++)
-            if(vet_righe[i].tecnica(this.celle,get_numeri_righe(),get_numeri_colonne())){
-                System.out.println("Applico tecnica alla riga "+i);
-                stampo();
-                //int interrompo_flusso=tastiera.nextInt();
+            if(vet_righe[i].tecnica(this)){
                 if(finito())
                     return true;
-                risolvo();
+                return risolvo();
             }
         for(int i=0;i<base;i++)
-            if(vet_colonne[i].tecnica(this.celle,get_numeri_righe(),get_numeri_colonne())){
-                System.out.println("Applico tecnica alla colonna "+i);
-                stampo();
-                //int interrompo_flusso=tastiera.nextInt();
+            if(vet_colonne[i].tecnica(this)){
                 if(finito())
                     return true;
-                risolvo();
+                return risolvo();
             }
-        if(finito())
-            return true;
-        else{
-            System.out.println("Con le tecniche a disposizione non sono in grado di risolvere il nonogram");
-            return false;
-        }
+        return false;
     }
     public Nonogram[] tentativi(){
         risolvo();
         if(finito()){
             Nonogram vet[]=new Nonogram[1];
-            vet[0]=copia_nonogram();
+            vet[0]=copia();
             return vet;
         }
         if(assurdo())
@@ -221,11 +221,11 @@ public class Nonogram{
         Nonogram vet[]=new Nonogram[0];
         for(int i=0;i<altezza;i++){
             for(int j=0;j<base;j++)
-                if(get_cella(i,j).get_carattere()=="   "){
-                    Nonogram nonogram1=copia_nonogram();
-                    Nonogram nonogram2=copia_nonogram();
-                    nonogram1.set_cella(i,j," X ");
-                    nonogram2.set_cella(i,j," "+(char)3+" ");
+                if(get_celle()[i][j].get_carattere()==Enum.tipo_carattere.vuoto){
+                    Nonogram nonogram1=copia();
+                    Nonogram nonogram2=copia();
+                    nonogram1.get_celle()[i][j].set_x();;
+                    nonogram2.get_celle()[i][j].set_blocco();;
                     vet=Metodi.aggiungo_vet_al_vettore(vet,nonogram1.tentativi());
                     vet=Metodi.aggiungo_vet_al_vettore(vet,nonogram2.tentativi());
                     return vet;
